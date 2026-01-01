@@ -1,0 +1,175 @@
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebaseConfig";
+
+// Pages
+import Login from "./pages/login";
+import Signup from "./pages/signup";
+import Home from "./pages/home";
+import Chatbot from "./pages/Chatbot";
+import Mood from "./pages/Mood";
+import Journal from "./pages/Journal";
+import JournalHistory from "./pages/JournalHistory";
+import Music from "./pages/Music";
+import Relax from "./pages/Relax";
+import Help from "./pages/Help";
+import Test from "./pages/Test";
+
+// Loading Component
+const Loading = () => (
+  <div className="loading-screen">
+    <p>Loading MindCare...</p>
+  </div>
+);
+
+// Protected Route - Only for logged-in users
+const ProtectedRoute = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) return <Loading />;
+
+  return user ? children : <Navigate to="/" replace />;
+};
+
+// Public Route - Redirect to home if already logged in
+const PublicRoute = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) return <Loading />;
+
+  return user ? <Navigate to="/home" replace /> : children;
+};
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        {/* Public Routes */}
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <Signup />
+            </PublicRoute>
+          }
+        />
+
+        {/* Protected Routes */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/test" element={<ProtectedRoute><Test /></ProtectedRoute>} />
+        <Route
+          path="/chatbot"
+          element={
+            <ProtectedRoute>
+              <Chatbot />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mood"
+          element={
+            <ProtectedRoute>
+              <Mood />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/journal"
+          element={
+            <ProtectedRoute>
+              <Journal />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/journal-history"
+          element={
+            <ProtectedRoute>
+              <JournalHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/music"
+          element={
+            <ProtectedRoute>
+              <Music />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Relax"
+          element={
+            <ProtectedRoute>
+              <Relax />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/help"
+          element={
+            <ProtectedRoute>
+              <Help />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+
+
