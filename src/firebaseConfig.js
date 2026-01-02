@@ -1,18 +1,24 @@
+// src/firebaseConfig.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Your Firebase config from .env (safe way!)
 const firebaseConfig = {
-  apiKey: "AIzaSyD2PUpfmkJCBB_mTj3F2LyOgjXoERV6DVM",
-  authDomain: "my-hackthone.firebaseapp.com",
-  projectId: "my-hackthone",
- storageBucket: "my-hackthone.firebasestorage.app",
-  messagingSenderId: "237350413840",
-  appId: "1:237350413840:web:3ed52c4bd91f7b8e850c95",
-  measurementId: "G-BDBWQ7YGBE"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
-
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Optional: export app if needed elsewhere
+export default app;
